@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chat Room</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+    #messages { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+    .msg { margin: 5px 0; }
+    .meta { color: #555; font-size: 0.8em; }
+    .reply { cursor: pointer; color: blue; text-decoration: underline; font-size: 0.8em; }
+  </style>
+</head>
+<body>
+<h2>Chat Room</h2>
+<div id="messages"></div>
+<input id="replyTo" type="hidden" />
+<input id="input" autocomplete="off" placeholder="Type a message" style="width:80%"/>
+<button onclick="send()">Send</button>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const user = sessionStorage.getItem('username');
+if(!user) location = '/';
+
+socket.emit('join', user);
+
+const msgs = document.getElementById('messages');
+const input = document.getElementById('input');
+const replyToInput = document.getElementById('replyTo');
+
+socket.on('init', ms => { ms.forEach(addMessage); scroll(); });
+
+socket.on('message', msg => { addMessage(msg); scroll(); });
+
+function addMessage(msg) {
+  const div = document.createElement('div');
+  div.className = 'msg';
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.textContent = msg.user + ' @ ' + msg.time;
+  const text = document.createElement('div');
+  text.textContent = msg.text;
+  div.appendChild(meta);
+  if(msg.replyTo) {
+    const reply = document.createElement('div');
+    reply.style.borderLeft = '2px solid #ccc';
+    reply.style.marginLeft = '10px';
+    reply.style.paddingLeft = '10px';
+    reply.className = 'replyMsg';
+    const r = document.getElementById('msg-' + msg.replyTo);
+    reply.textContent = r ? r.querySelector('.meta').textContent + ': ' + r.querySelector('.text').textContent : '[original message]';
+    div.appendChild(reply);
+  }
+  text.className = 'text';
+  div.appendChild(text);
+  const replyOpt = document.createElement('div');
+  replyOpt.className = 'reply';
+  replyOpt.textContent = 'reply';
+  replyOpt.onclick = () => { replyToInput.value = msg.id; input.focus(); };
+  div.appendChild(replyOpt);
+  div.id = 'msg-' + msg.id;
+  msgs.appendChild(div);
+}
+
+function send() {
+  if(!input.value) return;
+  socket.emit('message', { text: input.value, replyTo: replyToInput.value || null });
+  input.value = '';
+  replyToInput.value = '';
+}
+
+function scroll() { msgs.scrollTop = msgs.scrollHeight; }
+</script>
+</body>
+</html>
