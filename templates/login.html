@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chat Login</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="login-box">
+    <h2>Welcome to Chatroom</h2>
+    {% if error %}<p class="error">{{ error }}</p>{% endif %}
+    <form method="post">
+      <input type="text" name="username" placeholder="Your name" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Enter Chat</button>
+    </form>
+  </div>
+</body>
+</html>

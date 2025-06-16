@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chatroom</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <div class="chat-container">
+    <header>
+      <h2>Chatroom</h2>
+      <span>Logged in as {{ username }}</span>
+      <a href="/logout">Logout</a>
+    </header>
+    <div id="messages"></div>
+    <form id="msgForm">
+      <input id="msgInput" autocomplete="off" placeholder="Type your message...">
+      <input type="hidden" id="parentId" value="">
+      <button type="submit">Send</button>
+      <button type="button" id="cancelReply" style="display:none;">Cancel Reply</button>
+    </form>
+  </div>
+  <script src="/static/main.js"></script>
+</body>
+</html>
