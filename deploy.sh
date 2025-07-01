@@ -29,10 +29,6 @@ error() {
     exit 1
 }
 
-# Check if running as root
-if [[ $EUID -eq 0 ]]; then
-   error "This script should not be run as root for security reasons"
-fi
 
 # Check OS compatibility
 if [[ ! -f /etc/os-release ]]; then
